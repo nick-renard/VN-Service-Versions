@@ -12,8 +12,10 @@ def fetch_version_data():
 
     # Define the variables to be iterated over
     services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie']
-    environments = ['dev', 'qa', 'uat', 'prd']
-    ecosystems = ['ara', 'lyra', 'levy', 'crux', 'levis', 'draco', 'mars']
+    #environments = ['dev', 'qa', 'uat', 'prd']
+    environments = ['prd']
+    ecosystems = ['ara']
+    apps = ['menu', 'refund', 'status', 'loyalty', 'datanow', 'access', 'suites', 'devices']
 
     # Data to be written to excel
     data = []
@@ -28,12 +30,12 @@ def fetch_version_data():
         for environment in environments:
             for ecosystem in ecosystems:
                 # Dev, QA, and UAT version checks should only happen in the 'mars' ecosystem
-                if environment in ['dev', 'qa', 'uat'] and ecosystem != 'mars':
-                    continue
+                # if environment in ['dev', 'qa', 'uat'] and ecosystem != 'mars':
+                #     continue
 
-                # Skip prd.mars combination
-                if environment == 'prd' and ecosystem == 'mars':
-                    continue
+                # # Skip prd.mars combination
+                # if environment == 'prd' and ecosystem == 'mars':
+                #     continue
                 
                 # Build the URL
                 url = f"https://{service}.{environment}.{ecosystem}.vnops.net/version.json"
@@ -70,6 +72,50 @@ def fetch_version_data():
 
                 # Pause for 2 seconds to prevent overloading, is this even necessary? prolly not
                 #time.sleep(2)
+    
+    for app in apps:
+        for environment in environments:
+            for ecosystem in ecosystems:
+                # Dev, QA, and UAT version checks should only happen in the 'mars' ecosystem
+                # if environment in ['dev', 'qa', 'uat'] and ecosystem != 'mars':
+                #     continue
+
+                # # Skip prd.mars combination
+                # if environment == 'prd' and ecosystem == 'mars':
+                #     continue
+                
+                # Build the URL
+                url = f"https://example-{app}.ordernext.com/version.txt"
+                
+                # Log the URL being accessed
+                logging.info(f"Accessing URL: {url}")
+                
+                # Fetch the txt data from the URL. Each line is a different variable
+                try:
+                    response = requests.get(url, headers=headers)
+                    response_txt = response.text
+                    response_txt = response_txt.splitlines()
+                    version = response_txt[0]
+                    build_date = response_txt[3]
+                    
+                    # Append to data
+                    data.append({
+                        'service': app,
+                        'ecosystem': ecosystem,
+                        'version': version,
+                        'build_date': build_date,
+                        'url': url
+                    })
+
+                    # Log success
+                    #logging.info(f"Successfully fetched data from {url}")
+                    logging.info('\x1b[0;30;42m' + f"Successfully fetched data from {url}" + '\x1b[0m')
+                    #print('\x1b[0;30;42m' + f"Successfully fetched data from {url}" + '\x1b[0m')
+                    
+                except Exception as e:
+                    # Log error
+                    logging.error(f"Failed to fetch data from {url}. Error: {e}")
+
                 
     # Convert data to a pandas DataFrame
     df = pd.DataFrame(data)
