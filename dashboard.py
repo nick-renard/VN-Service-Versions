@@ -4,55 +4,65 @@ import requests
 import logging
 
 def fetch_version_data():
-    # Configure logging
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie']
-    environments = ['prd']
-    ecosystems = ['ara']
     apps = ['-pos', '', '-menu', '-refund', '-status', '-loyalty', '-datanow', '-access', '-suites', '-devices']
+    app_names = {
+        '-pos': 'Quick Service POS',
+        '-menu': 'Menu Manager',
+        '': 'Mobile Ordering',
+        '-refund': 'Orders App',
+        '-status': 'Status App',
+        '-loyalty': 'Loyalty App',
+        '-datanow': 'DataNow',
+        '-access': 'Access App',
+        '-suites': 'Suite App',
+        '-devices': 'Device App'
+    }
     data = []
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
 
     for service in services:
-        for environment in environments:
-            for ecosystem in ecosystems:
-                url = f"https://{service}.prd.{ecosystem}.vnops.net/version.json"
-                logging.info(f"Accessing URL: {url}")
+        url = f"https://{service}.prd.ara.vnops.net/version.json"
+        logging.info(f"Accessing URL: {url}")
 
-                try:
-                    response = requests.get(url, headers=headers)
-                    response_json = response.json()
-                    version = response_json.get('version')
-                    build_date = response_json.get('buildDate')
-                    
-                    data.append({
-                        'type': 'service',
-                        'name': service,
-                        'version': version,
-                        'build_date': build_date,
-                        'url': url
-                    })
+        try:
+            response = requests.get(url, headers=headers)
+            response_json = response.json()
+            version = response_json.get('version')
+            build_date = response_json.get('buildDate')
+            
+            data.append({
+                'type': 'Service',
+                'name': service.capitalize(),
+                'version': version,
+                'build_date': build_date,
+                'url': url
+            })
 
-                    logging.info(f"Successfully fetched data from {url}")
-                except Exception as e:
-                    logging.error(f"Failed to fetch data from {url}. Error: {e}")
+            logging.info(f"Successfully fetched data from {url}")
+        except Exception as e:
+            logging.error(f"Failed to fetch data from {url}. Error: {e}")
 
-    for app in apps:
-        url = f"https://example{app}.ordernext.com/version.txt"
+    for app_code in apps:
+        app_name = app_names.get(app_code, "Unknown App")
+        url = f"https://example{app_code}.ordernext.com/version.txt"
         logging.info(f"Accessing URL: {url}")
         
         try:
             response = requests.get(url, headers=headers)
             response_txt = response.text.splitlines()
-            version = response_txt[0]
+            version_line = response_txt[0]
+            # Extract the version number after "="
+            version = version_line.split('=')[1] if '=' in version_line else version_line
             build_date = response_txt[3]
             
             data.append({
-                'type': 'app',
-                'name': app,
+                'type': 'App',
+                'name': app_name,
                 'version': version,
                 'build_date': build_date,
                 'url': url
@@ -65,27 +75,17 @@ def fetch_version_data():
     return pd.DataFrame(data)
 
 def display_data(df, data_type):
-    st.header(f"{data_type.capitalize()}s")
-    unique_names = df['name'].unique()
-
-    for name in unique_names:
-        name_data = df[df['name'] == name]
-        st.subheader(name)
-        st.table(name_data[['name', 'version']].reset_index(drop=True))
+    st.header(f"{data_type}s")
+    filtered_df = df[df['type'] == data_type]
+    if not filtered_df.empty:
+        st.table(filtered_df[['name', 'version', 'build_date']].reset_index(drop=True))
 
 def main():
     st.title('Service and App Version Dashboard')
     df = fetch_version_data()
 
-    # Separate data into services and apps
-    services_df = df[df['type'] == 'service']
-    apps_df = df[df['type'] == 'app']
-
-    if not services_df.empty:
-        display_data(services_df, 'service')
-    
-    if not apps_df.empty:
-        display_data(apps_df, 'app')
+    display_data(df, 'Service')
+    display_data(df, 'App')
     
 if __name__ == '__main__':
     main()
