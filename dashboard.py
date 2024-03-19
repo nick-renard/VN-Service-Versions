@@ -26,7 +26,7 @@ def fetch_version_data():
     }
 
     for service in services:
-        url = f"https://{service}.prd.ara.vnops.net/version.json"
+        url = f"https://{service}.prd.lyra.vnops.net/version.json"
         logging.info(f"Accessing URL: {url}")
 
         try:
@@ -49,7 +49,7 @@ def fetch_version_data():
 
     for app_code in apps:
         app_name = app_names.get(app_code, "Unknown App")
-        url = f"https://example{app_code}.ordernext.com/version.txt"
+        url = f"https://validationssandbox{app_code}.ordernext.com/version.txt"
         logging.info(f"Accessing URL: {url}")
         
         try:
@@ -81,7 +81,7 @@ def display_data(df, data_type):
         st.table(filtered_df[['name', 'version', 'build_date']].reset_index(drop=True))
 
 def main():
-    st.title('Service and App Version Dashboard')
+    st.title('Service and App Version Dashboard [LYRA Versions]')
     df = fetch_version_data()
 
     display_data(df, 'Service')
