@@ -6,7 +6,7 @@ import logging
 def fetch_version_data():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie']
+    services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie', 'moneyball']
     apps = ['-pos', '', '-menu', '-refund', '-status', '-loyalty', '-datanow', '-access', '-suites', '-devices']
     app_names = {
         '-pos': 'Quick Service POS',
