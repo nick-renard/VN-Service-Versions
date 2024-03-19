@@ -154,11 +154,15 @@ def main():
             
         #display data for each app
         st.header("Apps")
-        apps = ['menu', 'refund', 'status', 'loyalty', 'datanow', 'access', 'suites', 'devices']
+        apps = df['app'].unique()
         for app in apps:
-            app_data = df[df['service'] == app]
-            app_data_display = app_data[['service', 'version']]
+            app_data = df[df['app'] == app]
+            app_data_display = app_data[['app', 'version']]
             st.table(app_data_display.reset_index(drop=True))
+        # for app in apps:
+        #     app_data = df[df['app'] == app]
+        #     app_data_display = app_data[['app', 'version']]
+        #     st.table(app_data_display.reset_index(drop=True))
             
     
 if __name__ == '__main__':
