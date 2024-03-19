@@ -38,7 +38,7 @@ def fetch_version_data():
                 #     continue
                 
                 # Build the URL
-                url = f"https://{service}.{environment}.{ecosystem}.vnops.net/version.json"
+                url = f"https://{service}.prd.ara.vnops.net/version.json"
                 
                 # Log the URL being accessed
                 logging.info(f"Accessing URL: {url}")
