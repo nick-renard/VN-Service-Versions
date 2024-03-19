@@ -59,12 +59,13 @@ def fetch_version_data():
             # Extract the version number after "="
             version = version_line.split('=')[1] if '=' in version_line else version_line
             build_date = response_txt[3]
+            build = build_date.split('=')[1] if '=' in build_date else build_date
             
             data.append({
                 'type': 'App',
                 'name': app_name,
                 'version': version,
-                'build_date': build_date,
+                'build_date': build,
                 'url': url
             })
 
