@@ -15,7 +15,7 @@ def fetch_version_data():
     #environments = ['dev', 'qa', 'uat', 'prd']
     environments = ['prd']
     ecosystems = ['ara']
-    apps = ['menu', 'refund', 'status', 'loyalty', 'datanow', 'access', 'suites', 'devices']
+    apps = ['-pos', '', '-menu', '-refund', '-status', '-loyalty', '-datanow', '-access', '-suites', '-devices']
 
     # Data to be written to excel
     data = []
@@ -85,7 +85,7 @@ def fetch_version_data():
                 #     continue
                 
                 # Build the URL
-                url = f"https://example-{app}.ordernext.com/version.txt"
+                url = f"https://example{app}.ordernext.com/version.txt"
                 
                 # Log the URL being accessed
                 logging.info(f"Accessing URL: {url}")
@@ -138,7 +138,7 @@ def main():
         environments = ecosystem_data['environment'].unique()
 
         # Display the ecosystem name as a header
-        st.header(ecosystem)
+        st.header("Services")
 
         # Display the tables for each environment within the ecosystem
         for environment in environments:
@@ -151,7 +151,15 @@ def main():
             # Display the table for the environment
             environment_data_display = environment_data[['service', 'version']]
             st.table(environment_data_display.reset_index(drop=True))
-
-
+            
+        #display data for each app
+        st.header("Apps")
+        apps = ['menu', 'refund', 'status', 'loyalty', 'datanow', 'access', 'suites', 'devices']
+        for app in apps:
+            app_data = df[df['service'] == app]
+            app_data_display = app_data[['service', 'version']]
+            st.table(app_data_display.reset_index(drop=True))
+            
+    
 if __name__ == '__main__':
     main()
