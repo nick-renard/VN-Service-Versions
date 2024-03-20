@@ -12,7 +12,7 @@ def fetch_version_data():
     app_names = {
         '-pos': 'Quick Service POS',
         'fs-pos': 'Full Service POS',
-        'ec-pos': 'Events Catering (Suites) POS',
+        'ec-pos': 'Events Catering (Suites-Levy) POS',
         '-menu': 'Menu Manager',
         '': 'Mobile Ordering',
         '-refund': 'Orders App',
@@ -75,6 +75,30 @@ def fetch_version_data():
             logging.info(f"Successfully fetched data from {url}")
         except Exception as e:
             logging.error(f"Failed to fetch data from {url}. Error: {e}")
+            
+    url = f"https://elevy-pos.ordernext.com/version.txt"
+    logging.info(f"Accessing URL: {url}")
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response_txt = response.text.splitlines()
+        version_line = response_txt[0]
+        # Extract the version number after "="
+        version = version_line.split('=')[1] if '=' in version_line else version_line
+        build_date = response_txt[3]
+        build = build_date.split('=')[1] if '=' in build_date else build_date
+        
+        data.append({
+            'type': 'App',
+            'name': app_name,
+            'version': version,
+            'build_date': build,
+            'url': url
+        })
+
+        logging.info(f"Successfully fetched data from {url}")
+    except Exception as e:
+        logging.error(f"Failed to fetch data from {url}. Error: {e}")
     
     return pd.DataFrame(data)
 
