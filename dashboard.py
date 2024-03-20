@@ -6,7 +6,7 @@ import logging
 def fetch_version_data():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    ecosystems = ['ara', 'lyra', 'crux', 'ln', 'levis', 'draco', 'levy']
+    ecosystems = ['ara', 'lyra', 'crux', 'ln', 'levis', 'levy']
     services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie', 'moneyball']
     apps = ['-pos', 'fs-pos', 'ec-pos', '', '-menu', '-refund', '-status', '-loyalty', '-datanow', '-access', '-suites', '-devices']
     app_names = {
@@ -106,20 +106,26 @@ def fetch_version_data():
     
     return pd.DataFrame(data)
 
-def display_data_by_ecosystem(df, data_type):
+def display_services_by_ecosystem(df):
     ecosystems = df['ecosystem'].unique()
     for ecosystem in ecosystems:
-        st.header(f"{ecosystem} {data_type}s")
-        ecosystem_df = df[(df['type'] == data_type) & (df['ecosystem'] == ecosystem)]
+        st.header(f"{ecosystem} Services")
+        ecosystem_df = df[(df['type'] == 'Service') & (df['ecosystem'] == ecosystem)]
         if not ecosystem_df.empty:
             st.table(ecosystem_df[['name', 'version', 'build_date']].reset_index(drop=True))
+
+def display_apps(df):
+    st.header("Apps")
+    apps_df = df[df['type'] == 'App']
+    if not apps_df.empty:
+        st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
 
 def main():
     st.title('Service and App Version Dashboard')
     df = fetch_version_data()
 
-    display_data_by_ecosystem(df, 'Service')
-    display_data_by_ecosystem(df, 'App')
+    display_services_by_ecosystem(df)
+    display_apps(df)
     
 if __name__ == '__main__':
     main()
