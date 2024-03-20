@@ -86,7 +86,8 @@ def fetch_version_data(progress_update):
 
 def main():
     st.title('Service and App Version Dashboard')
-    progress_bar = st.progress(0)
+    progress_text = "Fetching data... please wait..."
+    progress_bar = st.progress(0, text=progress_text)
 
     def progress_update(progress):
         progress_bar.progress(int(progress))
