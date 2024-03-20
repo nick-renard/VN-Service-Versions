@@ -90,7 +90,7 @@ def fetch_version_data():
         
         data.append({
             'type': 'App',
-            'name': app_name,
+            'name': "Events Catering (Suites-Levy) POS",
             'version': version,
             'build_date': build,
             'url': url
