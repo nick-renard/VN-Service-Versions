@@ -6,10 +6,13 @@ import logging
 def fetch_version_data():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+    #ecosystems = ['ara', 'lyra', 'levy', 'crux', 'ln', 'levis', 'draco']
     services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie', 'moneyball']
-    apps = ['-pos', '', '-menu', '-refund', '-status', '-loyalty', '-datanow', '-access', '-suites', '-devices']
+    apps = ['-pos', 'fs-pos', 'ec-pos', '', '-menu', '-refund', '-status', '-loyalty', '-datanow', '-access', '-suites', '-devices']
     app_names = {
         '-pos': 'Quick Service POS',
+        'fs-pos': 'Full Service POS',
+        'ec-pos': 'Events Catering (Suites) POS',
         '-menu': 'Menu Manager',
         '': 'Mobile Ordering',
         '-refund': 'Orders App',
