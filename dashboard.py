@@ -41,7 +41,7 @@ def fetch_version_data():
                 
                 data.append({
                     'type': 'Service',
-                    'ecosystem': ecosystem.capitalize(),
+                    'ecosystem': ecosystem.upper(),
                     'name': service.capitalize(),
                     'version': version,
                     'build_date': build_date,
@@ -68,6 +68,7 @@ def fetch_version_data():
             
             data.append({
                 'type': 'App',
+                'ecosystem': 'LYRA',
                 'name': app_name,
                 'version': version,
                 'build_date': build,
@@ -92,6 +93,7 @@ def fetch_version_data():
         
         data.append({
             'type': 'App',
+            'ecosystem': 'LEVY',
             'name': "Events Catering (Suites-Levy) POS",
             'version': version,
             'build_date': build,
@@ -115,6 +117,7 @@ def main():
     df = fetch_version_data()
 
     # display a separate table per ecosystem
+    
     display_data(df, 'Service')
     display_data(df, 'App')
     
