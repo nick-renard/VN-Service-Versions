@@ -135,22 +135,28 @@ def display_apps(df):
 def main():
     st.title('Service and App Version Dashboard')
 
-    progress_text = "Fetching data. Please wait..."
-    my_bar = st.progress(0, text=progress_text)
+    # Initialize the progress bar
+    latest_iteration = st.empty()
+    bar = st.progress(0)
 
-    def progress_update(progress):
-        my_bar.progress(progress, text=progress_text)
+    def progress_update(current, total):
+        progress = int((current / total) * 100)
+        latest_iteration.text(f'Fetching data... {progress}%')
+        bar.progress(progress)
 
     df = fetch_version_data(progress_update)
 
     # Finalize the progress bar
-    time.sleep(1)
-    my_bar.empty()
+    latest_iteration.text('Fetching data... done!')
+    bar.progress(100)
+    time.sleep(1)  # Optional: Pause to show completion before moving on
+
+    # Clear the progress display
+    latest_iteration.empty()
+    bar.empty()
 
     display_services_by_ecosystem(df)
     display_apps(df)
-    
-    st.button("Rerun")
 
 if __name__ == '__main__':
     main()
