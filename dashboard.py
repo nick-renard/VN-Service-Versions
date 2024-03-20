@@ -2,9 +2,8 @@ import pandas as pd
 import streamlit as st
 import requests
 import logging
-import time
 
-def fetch_version_data(progress_update):
+def fetch_version_data():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     ecosystems = ['ara', 'lyra', 'crux', 'ln', 'levis', 'levy']
@@ -24,8 +23,6 @@ def fetch_version_data(progress_update):
         '-suites': 'Suites App',
         '-devices': 'Devices App'
     }
-    total_operations = len(ecosystems) * len(services) + len(apps) + 1  # +1 for the additional app fetch at the end
-    current_operation = 0
     data = []
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -54,9 +51,6 @@ def fetch_version_data(progress_update):
                 logging.info(f"Successfully fetched data from {url}")
             except Exception as e:
                 logging.error(f"Failed to fetch data from {url}. Error: {e}")
-            
-        current_operation += 1
-        progress_update(current_operation / total_operations * 100)
 
     for app_code in apps:
         app_name = app_names.get(app_code, "Unknown App")
@@ -85,9 +79,6 @@ def fetch_version_data(progress_update):
         except Exception as e:
             logging.error(f"Failed to fetch data from {url}. Error: {e}")
             
-        current_operation += 1
-        progress_update(current_operation / total_operations * 100)
-            
     url = f"https://elevy-pos.ordernext.com/version.txt"
     logging.info(f"Accessing URL: {url}")
     
@@ -113,9 +104,6 @@ def fetch_version_data(progress_update):
     except Exception as e:
         logging.error(f"Failed to fetch data from {url}. Error: {e}")
     
-    current_operation += 1
-    progress_update(current_operation / total_operations * 100)
-    
     return pd.DataFrame(data)
 
 def display_services_by_ecosystem(df):
@@ -134,29 +122,10 @@ def display_apps(df):
 
 def main():
     st.title('Service and App Version Dashboard')
-
-    # Initialize the progress bar
-    latest_iteration = st.empty()
-    bar = st.progress(0)
-
-    def progress_update(current, total):
-        progress = int((current / total) * 100)
-        latest_iteration.text(f'Fetching data... {progress}%')
-        bar.progress(progress)
-
-    df = fetch_version_data(progress_update)
-
-    # Finalize the progress bar
-    latest_iteration.text('Fetching data... done!')
-    bar.progress(100)
-    time.sleep(1)  # Optional: Pause to show completion before moving on
-
-    # Clear the progress display
-    latest_iteration.empty()
-    bar.empty()
+    df = fetch_version_data()
 
     display_services_by_ecosystem(df)
     display_apps(df)
-
+    
 if __name__ == '__main__':
     main()
