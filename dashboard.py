@@ -6,7 +6,7 @@ import logging
 def fetch_version_data():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    #ecosystems = ['ara', 'lyra', 'levy', 'crux', 'ln', 'levis', 'draco']
+    ecosystems = ['ara', 'lyra', 'crux', 'ln', 'levis', 'draco', 'levy']
     services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie', 'moneyball']
     apps = ['-pos', 'fs-pos', 'ec-pos', '', '-menu', '-refund', '-status', '-loyalty', '-datanow', '-access', '-suites', '-devices']
     app_names = {
@@ -28,27 +28,29 @@ def fetch_version_data():
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
 
-    for service in services:
-        url = f"https://{service}.prd.lyra.vnops.net/version.json"
-        logging.info(f"Accessing URL: {url}")
+    for ecosystem in ecosystems:
+        for service in services:
+            url = f"https://{service}.prd.{ecosystem}.vnops.net/version.json"
+            logging.info(f"Accessing URL: {url}")
 
-        try:
-            response = requests.get(url, headers=headers)
-            response_json = response.json()
-            version = response_json.get('version')
-            build_date = response_json.get('buildDate')
-            
-            data.append({
-                'type': 'Service',
-                'name': service.capitalize(),
-                'version': version,
-                'build_date': build_date,
-                'url': url
-            })
+            try:
+                response = requests.get(url, headers=headers)
+                response_json = response.json()
+                version = response_json.get('version')
+                build_date = response_json.get('buildDate')
+                
+                data.append({
+                    'type': 'Service',
+                    'ecosystem': ecosystem.capitalize(),
+                    'name': service.capitalize(),
+                    'version': version,
+                    'build_date': build_date,
+                    'url': url
+                })
 
-            logging.info(f"Successfully fetched data from {url}")
-        except Exception as e:
-            logging.error(f"Failed to fetch data from {url}. Error: {e}")
+                logging.info(f"Successfully fetched data from {url}")
+            except Exception as e:
+                logging.error(f"Failed to fetch data from {url}. Error: {e}")
 
     for app_code in apps:
         app_name = app_names.get(app_code, "Unknown App")
@@ -106,12 +108,13 @@ def display_data(df, data_type):
     st.header(f"{data_type}s")
     filtered_df = df[df['type'] == data_type]
     if not filtered_df.empty:
-        st.table(filtered_df[['name', 'version', 'build_date']].reset_index(drop=True))
+        st.table(filtered_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
 
 def main():
-    st.title('Service and App Version Dashboard [LYRA Versions]')
+    st.title('Service and App Version Dashboard')
     df = fetch_version_data()
 
+    # display a separate table per ecosystem
     display_data(df, 'Service')
     display_data(df, 'App')
     
