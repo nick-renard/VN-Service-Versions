@@ -2,8 +2,9 @@ import pandas as pd
 import streamlit as st
 import requests
 import logging
+import time
 
-def fetch_version_data():
+def fetch_version_data(progress_update):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     ecosystems = ['ara', 'lyra', 'crux', 'ln', 'levis', 'levy']
@@ -23,6 +24,8 @@ def fetch_version_data():
         '-suites': 'Suites App',
         '-devices': 'Devices App'
     }
+    total_operations = len(ecosystems) * len(services) + len(apps) + 1  # +1 for the additional app fetch at the end
+    current_operation = 0
     data = []
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -122,10 +125,29 @@ def display_apps(df):
 
 def main():
     st.title('Service and App Version Dashboard')
-    df = fetch_version_data()
+
+    # Initialize the progress bar
+    latest_iteration = st.empty()
+    bar = st.progress(0)
+
+    def progress_update(current, total):
+        progress = int((current / total) * 100)
+        latest_iteration.text(f'Fetching data... {progress}%')
+        bar.progress(progress)
+
+    df = fetch_version_data(progress_update)
+
+    # Finalize the progress bar
+    latest_iteration.text('Fetching data... done!')
+    bar.progress(100)
+    time.sleep(1)  # Optional: Pause to show completion before moving on
+
+    # Clear the progress display
+    latest_iteration.empty()
+    bar.empty()
 
     display_services_by_ecosystem(df)
     display_apps(df)
-    
+
 if __name__ == '__main__':
     main()
