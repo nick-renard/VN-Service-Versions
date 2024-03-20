@@ -20,8 +20,8 @@ def fetch_version_data():
         '-loyalty': 'Loyalty App',
         '-datanow': 'DataNow',
         '-access': 'Access App',
-        '-suites': 'Suite App',
-        '-devices': 'Device App'
+        '-suites': 'Suites App',
+        '-devices': 'Devices App'
     }
     data = []
     headers = {
