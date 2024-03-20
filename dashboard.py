@@ -106,20 +106,20 @@ def fetch_version_data():
     
     return pd.DataFrame(data)
 
-def display_data(df, data_type):
-    st.header(f"{data_type}s")
-    filtered_df = df[df['type'] == data_type]
-    if not filtered_df.empty:
-        st.table(filtered_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
+def display_data_by_ecosystem(df, data_type):
+    ecosystems = df['ecosystem'].unique()
+    for ecosystem in ecosystems:
+        st.header(f"{ecosystem} {data_type}s")
+        ecosystem_df = df[(df['type'] == data_type) & (df['ecosystem'] == ecosystem)]
+        if not ecosystem_df.empty:
+            st.table(ecosystem_df[['name', 'version', 'build_date']].reset_index(drop=True))
 
 def main():
     st.title('Service and App Version Dashboard')
     df = fetch_version_data()
 
-    # display a separate table per ecosystem
-    
-    display_data(df, 'Service')
-    display_data(df, 'App')
+    display_data_by_ecosystem(df, 'Service')
+    display_data_by_ecosystem(df, 'App')
     
 if __name__ == '__main__':
     main()
