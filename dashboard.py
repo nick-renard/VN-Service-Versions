@@ -112,13 +112,13 @@ def display_services_by_ecosystem(df, expanded=False):
         with st.expander(f"{ecosystem} Services", expanded=expanded):
             ecosystem_df = df[(df['type'] == 'Service') & (df['ecosystem'] == ecosystem)]
             if not ecosystem_df.empty:
-                st.table(ecosystem_df[['name', 'version', 'build_date']].reset_index(drop=True), hide_index=True)
+                st.table(ecosystem_df[['name', 'version', 'build_date']].reset_index(drop=True))
 
 def display_apps(df, expanded=False):
     with st.expander("Apps", expanded=expanded):
         apps_df = df[df['type'] == 'App']
         if not apps_df.empty:
-            st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True), hide_index=True)
+            st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
 
 def main():
     st.title('Service and App Version Dashboard :sunglasses:')
