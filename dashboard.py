@@ -54,7 +54,7 @@ def fetch_version_data():
 
     for app_code in apps:
         app_name = app_names.get(app_code, "Unknown App")
-        url = f"https://validationssandbox{app_code}.ordernext.com/version.txt"
+        url = f"https://training{app_code}.ordernext.com/version.txt"
         logging.info(f"Accessing URL: {url}")
         
         try:
