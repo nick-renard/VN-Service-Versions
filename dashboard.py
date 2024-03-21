@@ -127,7 +127,7 @@ def main():
     df = fetch_version_data()
 
     with st.spinner('Wait for it...'):
-        time.sleep(11)
+        time.sleep(0)
         display_services_by_ecosystem(df, expanded=False)
         display_apps(df, expanded=True)
     
