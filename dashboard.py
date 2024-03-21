@@ -109,13 +109,13 @@ def fetch_version_data():
 def display_services_by_ecosystem(df, expanded=False):
     ecosystems = df['ecosystem'].unique()
     for ecosystem in ecosystems:
-        with st.expander(f"{ecosystem} Services", expanded=expanded):
+        with st.expander(f"{ecosystem} Services", expanded=expanded, divider='rainbow'):
             ecosystem_df = df[(df['type'] == 'Service') & (df['ecosystem'] == ecosystem)]
             if not ecosystem_df.empty:
                 st.table(ecosystem_df[['name', 'version', 'build_date']].reset_index(drop=True))
 
 def display_apps(df, expanded=False):
-    with st.expander("Apps", expanded=expanded):
+    with st.expander("Apps", expanded=expanded, divider='rainbow'):
         apps_df = df[df['type'] == 'App']
         if not apps_df.empty:
             st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
@@ -124,9 +124,10 @@ def main():
     st.title('Service and App Version Dashboard :sunglasses:')
     df = fetch_version_data()
 
-    display_services_by_ecosystem(df, expanded=True)
+    display_services_by_ecosystem(df, expanded=False)
     display_apps(df, expanded=True)
     
+    st.balloons()
     st.button("Rerun Fetch :nail_care:")
     
 if __name__ == '__main__':
