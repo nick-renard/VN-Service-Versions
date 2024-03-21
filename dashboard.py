@@ -123,13 +123,14 @@ def display_apps(df, expanded=False):
 def main():
     st.title('Service and App Version Dashboard :sunglasses:')
     st.button("Rerun Fetch :nail_care:")
+    
     with st.spinner('HOLD YOUR HORSES! Fetching data... :horse:'):
         df = fetch_version_data()
 
     display_services_by_ecosystem(df, expanded=False)
     display_apps(df, expanded=True)
     
-    st.toast('Much wow')
+    st.toast('Much wow', icon='🐶')
     st.balloons()
     
 if __name__ == '__main__':
