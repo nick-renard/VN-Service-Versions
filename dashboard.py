@@ -125,8 +125,9 @@ def main():
     st.button("Rerun Fetch :nail_care:")
     df = fetch_version_data()
 
-    display_services_by_ecosystem(df, expanded=False)
-    display_apps(df, expanded=True)
+    with st.spinner('Wait for it...'):
+        display_services_by_ecosystem(df, expanded=False)
+        display_apps(df, expanded=True)
     
     st.balloons()
     
