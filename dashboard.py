@@ -106,26 +106,28 @@ def fetch_version_data():
     
     return pd.DataFrame(data)
 
-def display_services_by_ecosystem(df):
+def display_services_by_ecosystem(df, expanded=False):
     ecosystems = df['ecosystem'].unique()
     for ecosystem in ecosystems:
-        st.header(f"{ecosystem} Services")
-        ecosystem_df = df[(df['type'] == 'Service') & (df['ecosystem'] == ecosystem)]
-        if not ecosystem_df.empty:
-            st.table(ecosystem_df[['name', 'version', 'build_date']].reset_index(drop=True))
+        with st.expander(f"{ecosystem} Services", expanded=expanded):
+            ecosystem_df = df[(df['type'] == 'Service') & (df['ecosystem'] == ecosystem)]
+            if not ecosystem_df.empty:
+                st.table(ecosystem_df[['name', 'version', 'build_date']].reset_index(drop=True))
 
-def display_apps(df):
-    st.header("Apps")
-    apps_df = df[df['type'] == 'App']
-    if not apps_df.empty:
-        st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
+def display_apps(df, expanded=False):
+    with st.expander("Apps", expanded=expanded):
+        apps_df = df[df['type'] == 'App']
+        if not apps_df.empty:
+            st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
 
 def main():
-    st.title('Service and App Version Dashboard')
+    st.title('Service and App Version Dashboard :sunglasses:')
     df = fetch_version_data()
 
-    display_services_by_ecosystem(df)
-    display_apps(df)
+    display_services_by_ecosystem(df, expanded=True)
+    display_apps(df, expanded=True)
+    
+    st.button("Rerun Fetch :nail_care:")
     
 if __name__ == '__main__':
     main()
