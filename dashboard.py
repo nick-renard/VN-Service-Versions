@@ -129,7 +129,7 @@ def main():
     display_services_by_ecosystem(df, expanded=False)
     display_apps(df, expanded=True)
     
-    st.toast('Much wow', icon=':dog:')
+    st.toast('Much wow')
     st.balloons()
     
 if __name__ == '__main__':
