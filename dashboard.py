@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 import streamlit as st
 import requests
@@ -126,10 +127,9 @@ def main():
     df = fetch_version_data()
 
     with st.spinner('Wait for it...'):
+        time.sleep(11)
         display_services_by_ecosystem(df, expanded=False)
         display_apps(df, expanded=True)
-    
-    st.success('All done! :tada:')
     
     st.balloons()
     
