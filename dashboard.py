@@ -129,6 +129,8 @@ def main():
         display_services_by_ecosystem(df, expanded=False)
         display_apps(df, expanded=True)
     
+    st.success('All done! :tada:')
+    
     st.balloons()
     
 if __name__ == '__main__':
