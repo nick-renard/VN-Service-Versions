@@ -1,4 +1,3 @@
-import time
 import pandas as pd
 import streamlit as st
 import requests
@@ -130,6 +129,7 @@ def main():
     display_services_by_ecosystem(df, expanded=False)
     display_apps(df, expanded=True)
     
+    st.toast('Much wow', icon=':dog:')
     st.balloons()
     
 if __name__ == '__main__':
