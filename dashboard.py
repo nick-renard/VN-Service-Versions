@@ -120,18 +120,37 @@ def display_apps(df, expanded=False):
         if not apps_df.empty:
             st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
 
+# def main():
+#     st.title('Service and App Version Dashboard :sunglasses:')
+#     st.button("Rerun Fetch :nail_care:")
+    
+#     with st.spinner('HOLD YOUR HORSES! Fetching data... :horse:'):
+#         df = fetch_version_data()
+
+#     display_services_by_ecosystem(df, expanded=False)
+#     display_apps(df, expanded=True)
+    
+#     st.toast('Much wow', icon='🐶')
+#     st.balloons()
+
 def main():
     st.title('Service and App Version Dashboard :sunglasses:')
-    st.button("Rerun Fetch :nail_care:")
     
-    with st.spinner('HOLD YOUR HORSES! Fetching data... :horse:'):
-        df = fetch_version_data()
+    # Initialize or access the session state variable
+    if 'fetching' not in st.session_state:
+        st.session_state.fetching = False
 
-    display_services_by_ecosystem(df, expanded=False)
-    display_apps(df, expanded=True)
-    
-    st.toast('Much wow', icon='🐶')
-    st.balloons()
+    if st.button("Rerun Fetch :nail_care:") and not st.session_state.fetching:
+        st.session_state.fetching = True
+        with st.spinner('HOLD YOUR HORSES! Fetching data... :horse:'):
+            df = fetch_version_data()
+            display_services_by_ecosystem(df, expanded=False)
+            display_apps(df, expanded=True)
+            st.session_state.fetching = False
+        st.toast('Much wow', icon='🐶')
+        st.balloons()
+    elif st.session_state.fetching:
+        st.write("Please wait, fetching is in progress...")
     
 if __name__ == '__main__':
     main()
