@@ -106,6 +106,41 @@ def fetch_version_data():
     
     return pd.DataFrame(data)
 
+def fetch_lower_service_version():
+    # Fetching version data from dev and qa environments
+    ecosystems = ['mars']
+    services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie', 'moneyball']
+    dataLower = []
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    for ecosystem in ecosystems:
+        for environment in ['dev', 'qa', 'uat']:
+            for service in services:
+                url = f"https://{service}.{environment}.{ecosystem}.vnops.net/version.json"
+                logging.info(f"Accessing URL: {url}")
+
+                try:
+                    response = requests.get(url, headers=headers)
+                    response_json = response.json()
+                    version = response_json.get('version')
+                    build_date = response_json.get('buildDate')
+
+                    dataLower.append({
+                        'type': 'Service',
+                        'ecosystem': ecosystem.upper(),
+                        'name': service.capitalize(),
+                        'version': version,
+                        'build_date': build_date,
+                        'url': url
+                    })
+
+                    logging.info(f"Successfully fetched data from {url}")
+                except Exception as e:
+                    logging.error(f"Failed to fetch data from {url}. Error: {e}")
+                    
+    return pd.DataFrame(dataLower)
+
 def display_services_by_ecosystem(df, expanded=False):
     ecosystems = df['ecosystem'].unique()
     for ecosystem in ecosystems:
@@ -119,16 +154,27 @@ def display_apps(df, expanded=False):
         apps_df = df[df['type'] == 'App']
         if not apps_df.empty:
             st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
+            
+def display_lower_service_versions(lower_df, expanded=False):
+    environments = lower_df['ecosystem'].unique()
+    for environment in environments:
+        with st.expander(f"{environment.upper()} Services", expanded=expanded):
+            environment_df = lower_df[lower_df['ecosystem'] == environment]
+            if not environment_df.empty:
+                st.table(environment_df[['name', 'version', 'build_date']].reset_index(drop=True))
 
 def main():
-    st.title('Service and App Version Dashboard :sunglasses:')
+    st.title('Service and App Versions :sunglasses:')
     st.button("Rerun Fetch :nail_care:")
     
     with st.spinner('HOLD YOUR HORSES! Fetching data... :horse:'):
         df = fetch_version_data()
+        lower_df = fetch_lower_service_version()
+        
 
     display_services_by_ecosystem(df, expanded=False)
     display_apps(df, expanded=True)
+    display_lower_service_versions(lower_df, expanded=False)
     
     st.toast('Much wow', icon='🐶')
     st.balloons()
