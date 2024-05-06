@@ -106,8 +106,9 @@ def fetch_version_data():
     
     return pd.DataFrame(data)
 
-def fetch_lower_service_version():
-    # Fetching version data from dev and qa environments
+def fetch_lower_version_data():
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
     ecosystems = ['mars']
     services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie', 'moneyball']
     dataLower = []
@@ -155,11 +156,12 @@ def display_apps(df, expanded=False):
         if not apps_df.empty:
             st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
             
-def display_lower_service_versions(lower_df, expanded=False):
-    environments = lower_df['environments'].unique()
+def display_lower_service_versions(df, expanded=False):
+    # Display by environment
+    environments = df['environment'].unique()
     for environment in environments:
-        with st.expander(f"{environment.upper()} Services", expanded=expanded):
-            environment_df = lower_df[lower_df['ecosystem'] == environment]
+        with st.expander(f"{environment} Services", expanded=expanded):
+            environment_df = df[df['environment'] == environment]
             if not environment_df.empty:
                 st.table(environment_df[['name', 'version', 'build_date']].reset_index(drop=True))
 
@@ -169,12 +171,12 @@ def main():
     
     with st.spinner('HOLD YOUR HORSES! Fetching data... :horse:'):
         df = fetch_version_data()
-        lower_df = fetch_lower_service_version()
+        dataLower = fetch_lower_version_data()
         
 
     display_services_by_ecosystem(df, expanded=False)
     display_apps(df, expanded=True)
-    display_lower_service_versions(lower_df, expanded=False)
+    display_lower_service_versions(dataLower, expanded=False)
     
     st.toast('Much wow', icon='🐶')
     st.balloons()
