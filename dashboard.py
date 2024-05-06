@@ -42,6 +42,7 @@ def fetch_version_data():
                 data.append({
                     'type': 'Service',
                     'ecosystem': ecosystem.upper(),
+                    'environment': 'PRD',
                     'name': service.capitalize(),
                     'version': version,
                     'build_date': build_date,
@@ -69,6 +70,7 @@ def fetch_version_data():
             data.append({
                 'type': 'App',
                 'ecosystem': 'LYRA',
+                'environment': 'PRD',
                 'name': app_name,
                 'version': version,
                 'build_date': build,
@@ -94,6 +96,7 @@ def fetch_version_data():
         data.append({
             'type': 'App',
             'ecosystem': 'LEVY',
+            'environment': 'PRD',
             'name': "Events Catering (Suites-Levy) POS",
             'version': version,
             'build_date': build,
@@ -106,6 +109,43 @@ def fetch_version_data():
     
     return pd.DataFrame(data)
 
+def fetch_lower_version_data():
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+    ecosystems = ['mars']
+    environments = ['dev', 'qa', 'uat']
+    services = ['stadium', 'canopy', 'loyalty', 'user', 'portico', 'stubs', 'paulie', 'moneyball']
+    dataLower = []
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    for environment in environments:
+        for service in services:
+            for ecosystem in ecosystems:
+                url = f"https://{service}.{environment}.{ecosystem}.vnops.net/version.json"
+                logging.info(f"Accessing URL: {url}")
+
+                try:
+                    response = requests.get(url, headers=headers)
+                    response_json = response.json()
+                    version = response_json.get('version')
+                    build_date = response_json.get('buildDate')
+
+                    dataLower.append({
+                        'type': 'Service',
+                        'ecosystem': ecosystem.upper(),
+                        'environment': environment.upper(),
+                        'name': service.capitalize(),
+                        'version': version,
+                        'build_date': build_date,
+                        'url': url
+                    })
+
+                    logging.info(f"Successfully fetched data from {url}")
+                except Exception as e:
+                    logging.error(f"Failed to fetch data from {url}. Error: {e}")
+                    
+    return pd.DataFrame(dataLower)
 
 def display_services_by_ecosystem(df, expanded=False):
     ecosystems = df['ecosystem'].unique()
@@ -120,6 +160,15 @@ def display_apps(df, expanded=False):
         apps_df = df[df['type'] == 'App']
         if not apps_df.empty:
             st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
+            
+def display_lower_service_versions(dataLower, expanded=False):
+    # Display by environment
+    environments = dataLower['environment'].unique()
+    for environment in environments:
+        with st.expander(f"MARS {environment} Services", expanded=expanded):
+            environment_df = dataLower[dataLower['environment'] == environment]
+            if not environment_df.empty:
+                st.table(environment_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
 
 def main():
     st.title('Service and App Versions :sunglasses:')
@@ -127,9 +176,12 @@ def main():
     
     with st.spinner('HOLD YOUR HORSES! Fetching data... :horse:'):
         df = fetch_version_data()
+        dataLower = fetch_lower_version_data()
+        
 
     display_services_by_ecosystem(df, expanded=False)
     display_apps(df, expanded=True)
+    display_lower_service_versions(dataLower, expanded=False)
     
     st.toast('Much wow', icon='🐶')
     st.balloons()
