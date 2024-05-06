@@ -156,12 +156,12 @@ def display_apps(df, expanded=False):
         if not apps_df.empty:
             st.table(apps_df[['ecosystem', 'name', 'version', 'build_date']].reset_index(drop=True))
             
-def display_lower_service_versions(df, expanded=False):
+def display_lower_service_versions(dataLower, expanded=False):
     # Display by environment
-    environments = df['environment'].unique()
+    environments = dataLower['environment'].unique()
     for environment in environments:
         with st.expander(f"{environment} Services", expanded=expanded):
-            environment_df = df[df['environment'] == environment]
+            environment_df = dataLower[dataLower['environment'] == environment]
             if not environment_df.empty:
                 st.table(environment_df[['name', 'version', 'build_date']].reset_index(drop=True))
 
